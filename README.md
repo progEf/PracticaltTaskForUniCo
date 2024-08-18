@@ -53,4 +53,31 @@ PracticalTaskForUniCo/
 
 
 
-### Примечания
+### core\urls.py
+```sh
+    path('admin/', admin.site.urls),
+    path('', products_home, name='home'), # Home page
+    path('buy/<int:id>/', BuyView.as_view(), name='buy_item'), # API for buy
+    path('item/<int:id>/', item_detail, name='item_detail'), #Item page
+    path('page/', AllProducts.as_view(), name='item_count'), # API all products
+```
+### Главная страница:
+<button onclick="document.getElementById('image').style.display='block'">Показать изображение</button>
+<img id="image" src="images/HomePage.png" alt="Главная страница" width="400" style="display:none;"/>
+### APIStripe\views.py
+Путь к html
+```sh
+def products_home(request): # home page
+    return render(request, 'home.html')
+```
+Api 
+```sh
+class AllProducts(APIView):# page/
+    def get(self, request):
+        paginator = PageNumberPagination()# Создаем экземпляр пагинатора
+        paginator.page_size = 9  #  размер страницы
+        items = Item.objects.values('id', 'name', 'price')  #выбираем  необходимые поля
+        paginated_items = paginator.paginate_queryset(items, request) # Пагинируем запрос, используя переданные параметры из запроса
+
+        return paginator.get_paginated_response(paginated_items)
+```
