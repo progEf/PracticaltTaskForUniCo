@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .item {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin: 10px;
+            padding: 20px;
+            width: calc(33% - 40px); /* Учитываем отступы */
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .item h3 {
+            margin: 10px 0;
+        }
+
+        .item p {
+            color: #555;
+        }
+
+        .button {
+            background-color: #007bff; /* Цвет кнопки */
+            color: white; /* Цвет текста */
+            border: none; /* Убираем рамку */
+            border-radius: 5px; /* Закругляем углы */
+            padding: 10px 15px; /* Отступы внутри кнопки */
+            cursor: pointer; /* Курсор при наведении */
+            text-decoration: none; /* Убираем подчеркивание */
+            display: inline-block; /* Делает кнопку блочным элементом */
+        }
+
+        .button:hover {
+            background-color: #0056b3; /* Цвет кнопки при наведении */
+        }
+    </style>
+</head>
+<body>
+<h1>Данные из API</h1>
+<div class="container" id="results"></div>
+<div class="nav-buttons">
+    <button id="prevButton" class="button" onclick="changePage(-1)">Назад</button>
+    <button id="nextButton" class="button" onclick="changePage(1)">Вперед</button>
+</div>
+
+<script>
+    var URL = '/page/';
+    var Past;
+    var Next
+
+    async function fetchData(urls) {
+        try {
+            const response = await fetch(urls); // Замените на ваш URL
+            const data = await response.json();
+            Next = data['next']
+            Past = data['previous']
+
+            const resultsContainer = document.getElementById('results');
+            data.results.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'item';
+                var Href = '/item/' + item.id
+                itemDiv.innerHTML = '<h3>' + item.name + '</h3>' +
+                    '<p>Цена: ' + item.price + '$.</p>' +
+                    "<a href=" + Href + " class='button'>Перейти</a>";
+
+                resultsContainer.appendChild(itemDiv);
+
+            });
+        } catch (error) {
+            console.error('Ошибка при получении данных:', error);
+        }
+    }
+
+    // Вызываем функцию для получения данных
+    fetchData(URL);
+
+    function changePage(direction) {
+        if (direction === -1) {
+            if (Past !== null) {
+                document.getElementById('results').innerHTML = '';
+                fetchData(Past);
+
+            }
+        } else {
+            if (Next !== null) {
+                document.getElementById('results').innerHTML = '';
+
+                fetchData(Next);
+            }
+        }
+
+    }
+</script>
+</body>
+</html>
