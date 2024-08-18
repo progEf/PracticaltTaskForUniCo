@@ -17,6 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from APIStripe.views import BuyView, item_detail, AllProducts, products_home
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', products_home, name='home'), # Home page
+    path('buy/<int:id>/', BuyView.as_view(), name='buy_item'), # API for buy
+    path('item/<int:id>/', item_detail, name='item_detail'), #Item page
+    path('page/', AllProducts.as_view(), name='item_count'), # API all products
 ]
